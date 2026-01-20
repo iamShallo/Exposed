@@ -131,14 +131,12 @@
                     <div class="viewer__metaKey">MEDIA TYPE</div>
                     <div id="viewer-type" data-sensitive></div>
                 </div>
+
                 <div class="viewer__metaRow">
-                    <div class="viewer__metaKey">STATUS</div>
-                    <div id="viewer-status" data-sensitive></div>
+                    <div class="viewer__metaKey">RIGHT&STATUS</div>
+                    <div id="viewer-rightStatus" data-sensitive></div>
                 </div>
-                <div class="viewer__metaRow">
-                    <div class="viewer__metaKey">RIGHTS</div>
-                    <div id="viewer-right" data-sensitive></div>
-                </div>
+
                 <div class="viewer__metaRow">
                     <div class="viewer__metaKey">SOURCE</div>
                     <div id="viewer-source" data-sensitive></div>
@@ -298,8 +296,7 @@
             const vTitle = document.getElementById('viewer-title');
             const vDate = document.getElementById('viewer-date');
             const vType = document.getElementById('viewer-type');
-            const vStatus = document.getElementById('viewer-status');
-            const vRight = document.getElementById('viewer-right');
+            const vRightStatus = document.getElementById('viewer-rightStatus');
             const vSource = document.getElementById('viewer-source');
             const vLink = document.getElementById('viewer-link');
             const vShort = document.getElementById('viewer-short');
@@ -316,8 +313,7 @@
                 vTitle.textContent = '';
                 vDate.textContent = '';
                 vType.textContent = '';
-                vStatus.textContent = '';
-                vRight.textContent = '';
+                vRightStatus.textContent = '';
                 vSource.textContent = '';
                 vShort.textContent = '';
                 vLink.href = '#';
@@ -339,6 +335,11 @@
                 viewerImg.alt = imgEl.alt || '';
 
                 lockScroll(true);
+
+                // Se già vista: niente "hover to exposed", mostra subito i dati
+                if (currentThumbFigure.classList.contains('is-viewed')) {
+                    expose();
+                }
             };
 
             const closeViewer = () => {
@@ -362,8 +363,12 @@
                 vTitle.textContent = currentThumbFigure.dataset.title || '';
                 vDate.textContent = currentThumbFigure.dataset.date || '';
                 vType.textContent = currentThumbFigure.dataset.type || '';
-                vStatus.textContent = currentThumbFigure.dataset.status || '';
-                vRight.textContent = currentThumbFigure.dataset.right || '';
+
+                const right = (currentThumbFigure.dataset.right || '').trim();
+                const status = (currentThumbFigure.dataset.status || '').trim();
+                vRightStatus.textContent =
+                    right && status ? `${right} & ${status}` : (right || status);
+
                 vSource.textContent = currentThumbFigure.dataset.source || '';
                 vShort.textContent = currentThumbFigure.dataset.short || '';
 
