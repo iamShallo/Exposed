@@ -1,0 +1,621 @@
+﻿@page "/timeline"
+@{
+    ViewData["Title"] = "Timeline";
+
+    var years = new[] { "1939", "1940", "1941", "1942", "1943", "1944", "1945" };
+
+    // DB-like shape:
+    // Id, Title, Type, Date, Source, Right, Status, ShortDescription, SourceLink
+    var items = new[] {
+        new { Id=1,  Title="Picture Post: The Blitz",                  Type="Vintage Magazine Clipping",       Date="1940",       Source="Picture Post / Hulton Archive",                       Right="Copyrighted / Digitized Analog",     Status="Copyrighted / Digitized Analog",     ShortDescription="A spread from the famous 'Picture Post' magazine showing photo-essays of the London Blitz. This is how the public saw the war: through curated, impactful photojournalism on glossy paper.", SourceLink="https://www.alamy.com/stock-photo/world-war-picture-post-magazine.html" },
+        new { Id=2,  Title="Sleeping in the Underground",              Type="Original Photographic Print",      Date="1940-11",    Source="Imperial War Museum",                                 Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="London civilians sleeping crowded on platforms and escalators of the Underground, used as a makeshift air raid shelter.", SourceLink="https://www.iwm.org.uk/collections/item/object/205194638" },
+        new { Id=3,  Title="The Magnificent Eleven (D-Day Sequences)", Type="35mm Negatives / Sequence",        Date="1944-06-06", Source="Life Magazine (Robert Capa)",                         Right="Copyrighted / Digitized",            Status="Copyrighted / Digitized",            ShortDescription="The famous surviving sequence of 11 negatives from D-Day. These frames show the chronological progression of Capa wading ashore with the first wave, capturing the raw, blurred reality of combat.", SourceLink="https://www.magnumphotos.com/newsroom/conflict/robert-capa-d-day-omaha-beach/" },
+        new { Id=4,  Title="Dig for Victory (Propaganda Poster)",       Type="Ephemera / Poster",                Date="1940",       Source="Imperial War Museum / Ministry of Food",              Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="The iconic 'Dig for Victory' poster encouraging civilians to turn gardens and parks into allotments to grow food and fight wartime shortages.", SourceLink="https://www.iwm.org.uk/collections/item/object/27692" },
+        new { Id=5,  Title="Cologne Destroyed",                        Type="Aerial Photography",                Date="1945-05",    Source="U.S. Army / National Archives",                       Right="Public Domain / Digitized Analog",   Status="Public Domain / Digitized Analog",   ShortDescription="Impressive aerial view of Cologne completely razed by Allied bombings. The Gothic Cathedral stands out amidst the ruins.", SourceLink="https://www.awm.gov.au/collection/C204226" },
+        new { Id=6,  Title="VE Day Celebrations (Whitehall)",           Type="Original Photographic Print",      Date="1945-05-08", Source="Imperial War Museum",                                 Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="Huge crowds of civilians and soldiers gather in Whitehall, London to celebrate Victory in Europe Day, marking the end of the bombings and the war in Europe.", SourceLink="https://www.iwm.org.uk/collections/item/object/205201890" },
+        new { Id=7,  Title="Warsaw Razed to the Ground",                Type="Aerial Photography",                Date="1945-01",    Source="Polish Military Archive",                             Right="Public Domain / Digitized Analog",   Status="Public Domain / Digitized Analog",   ShortDescription="Desolate aerial view of the Warsaw Ghetto and city center transformed into a desert of rubble and bricks.", SourceLink="https://en.wikipedia.org/wiki/Destruction_of_Warsaw" },
+        new { Id=8,  Title="Gas Mask Drill at School",                  Type="Drawing",                           Date="1941",       Source="Imperial War Museum",                                 Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="Schoolchildren sitting at their desks wearing gas masks during a drill. A haunting image of how war invaded the daily lives of children.", SourceLink="https://www.iwm.org.uk/collections/item/object/17270" },
+        new { Id=9,  Title="Postcard \"London Under Fire\"",            Type="Postcard",                          Date="1941",       Source="Vintage Postcard Collection",                         Right="Public Domain / Digitized Analog",   Status="Public Domain / Digitized Analog",   ShortDescription="Vintage postcard sent by civilians to show bombing damage (Parliament) and reassure relatives of their survival.", SourceLink="https://www.lookandlearn.com/history-images/M431220/The-Houses-of-Parliament-London-showing-bomb-damage-during-WW2" },
+        new { Id=10, Title="Life Magazine: Eileen Dunne",               Type="Vintage Magazine Clipping",         Date="1940-09",    Source="Life Magazine (Cecil Beaton)",                        Right="Copyrighted / Digitized Analog",     Status="Copyrighted / Digitized Analog",     ShortDescription="Famous Life Magazine cover featuring little Eileen Dunne injured during the Blitz, used to raise American awareness.", SourceLink="https://time.com/3878665/cecil-beaton-portrait-of-eileen-dunne-1940-london-blitz/" },
+        new { Id=11, Title="The Milkman amidst Rubble",                 Type="Original Photographic Print",      Date="1940-10",    Source="Imperial War Museum",                                 Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="Iconic propaganda photo showing a milkman delivering milk over London's ruins after a raid.", SourceLink="https://en.wikipedia.org/wiki/Delivery_After_Raid" },
+        new { Id=12, Title="Reading in the Bombed Library",             Type="Original Photographic Print",      Date="1940-09",    Source="English Heritage",                                    Right="Public Domain / Digitized Analog",   Status="Public Domain / Digitized Analog",   ShortDescription="Surreal image of three men browsing books in the Holland House library despite the roof being destroyed.", SourceLink="https://en.wikipedia.org/wiki/Holland_House" },
+        new { Id=13, Title="Tea amidst the Ruins",                      Type="Original Photographic Print",      Date="1944-06",    Source="Mirrorpix / Daily Mirror",                            Right="Copyrighted / Digitized Analog",     Status="Copyrighted / Digitized Analog",     ShortDescription="A woman sits on a wooden crate drinking a cup of tea amidst the rubble of her house destroyed by a V1.", SourceLink="https://www.mediastorehouse.com/memory-lane-prints/mirror/0100to0199-00168/woman-enjoys-cup-tea-midst-bomb-damage-new-cross-21539545.html" },
+        new { Id=14, Title="War Games on Bomb Sites",                   Type="Original Photographic Print",      Date="1944",       Source="Imperial War Museum",                                 Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="Children playing 'war' climbing mountains of rubble and bricks of a bombed building in London.", SourceLink="https://www.iwm.org.uk/collections/item/object/205195686" },
+        new { Id=15, Title="The Farewell (Kiss at the Station)",        Type="Original Photographic Print",      Date="1944-02",    Source="Life Magazine (Alfred Eisenstaedt)",                  Right="Copyrighted / Digitized Analog",     Status="Copyrighted / Digitized Analog",     ShortDescription="An American soldier tenderly kisses his girlfriend goodbye at Pennsylvania Station before deploying to the front. A universal symbol of wartime separation.", SourceLink="https://www.icp.org/browse/archive/objects/soldier-tenderly-kissing-his-girlfriend-while-saying-goodbye-in-pennsylvania" },
+        new { Id=16, Title="Mobile Canteen (Tea for Heroes)",           Type="Original Photographic Print",      Date="1941",       Source="Imperial War Museum (Ministry of Information)",       Right="Non-Commercial / Digitized Analog",  Status="Non-Commercial / Digitized Analog",  ShortDescription="WVS volunteers serving hot tea and food from a mobile canteen to rescue workers and civilians in a bomb-damaged London street.", SourceLink="https://www.iwm.org.uk/collections/item/object/205197958" },
+        new { Id=17, Title="Dancing at Clapham South",                  Type="B/W Print",                         Date="1944",       Source="London Transport Museum",                             Right="Copyrighted / Digitized",            Status="Copyrighted / Digitized",            ShortDescription="With space for around 8,000 people, each deep-level shelter was not a place for privacy. Instead, shelterers often attempted to lighten the mood with entertainment ranging from impromptu parties and singalongs to knitting or a game of draughts.", SourceLink="https://www.ltmuseum.co.uk/collections/stories/war/deep-level-shelters" },
+        new { Id=18, Title="Operation Pied Piper (Evacuation)",         Type="Original Photographic Print",      Date="1939-09",    Source="Imperial War Museum / Press",                         Right="Public Domain",                      Status="Public Domain",                      ShortDescription="Schoolchildren with luggage and gas masks gathering at a London station, ready to be evacuated to the countryside to escape the expected bombing raids.", SourceLink="https://www.iwm.org.uk/history/the-evacuated-children-of-the-second-world-war" },
+        new { Id=19, Title="Rationing Queues",                          Type="Original Photographic Print",      Date="1945",       Source="Ministry of Food",                                    Right="Public Domain",                      Status="Public Domain",                      ShortDescription="Housewives queuing outside a greengrocer's shop with ration books in hand. Shortages meant that queuing became a daily part of civilian life.", SourceLink="https://www.iwm.org.uk/collections/item/object/205202056" }
+    };
+
+    string YearFromDate(string d) => string.IsNullOrWhiteSpace(d) ? "" : d.Trim().Substring(0, Math.Min(4, d.Trim().Length));
+    var byYear = years.ToDictionary(y => y, y => items.Where(i => YearFromDate(i.Date) == y).ToArray());
+
+    Func<object[], object[]> leftCol = arr => arr.Where((x, i) => i % 2 == 0).ToArray();
+    Func<object[], object[]> rightCol = arr => arr.Where((x, i) => i % 2 == 1).ToArray();
+}
+
+<div class="screen">
+    <header class="ui-top">
+        <a class="ui-brand" href="/">EXPOSED</a>
+        <button class="ui-menu" id="menu-toggle" type="button" aria-label="Menu">☰</button>
+    </header>
+
+    <div class="year-indicator" aria-hidden="true">
+        <span class="year-indicator__label">YEAR</span>
+        <span class="year-indicator__value">
+            <span id="year-indicator-inner" class="year-indicator__inner">1939</span>
+        </span>
+    </div>
+
+    <div class="timeline-wrap" id="timeline">
+        @foreach (var y in years)
+        {
+            var group = byYear[y];
+            if (group.Length == 0)
+            {
+                continue;
+            }
+
+            var leftY = leftCol(group);
+            var rightY = rightCol(group);
+
+            <section class="year-section" id="year-@y" data-year="@y">
+                <div class="thumb-col left">
+                    @foreach (dynamic it in leftY)
+                    {
+                        <figure class="thumb"
+                                data-id="@it.Id"
+                                data-title="@it.Title"
+                                data-date="@it.Date"
+                                data-type="@it.Type"
+                                data-status="@it.Status"
+                                data-right="@it.Right"
+                                data-source="@it.Source"
+                                data-short="@it.ShortDescription"
+                                data-link="@it.SourceLink">
+                            <img class="thumb-img" data-id="@it.Id" data-exts="jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP" alt="@it.Title (@it.Date, @it.Type)" />
+                            <figcaption class="caption">
+                                <strong>@it.Title</strong>
+                                <span>@it.Date · @it.Type</span>
+                            </figcaption>
+                        </figure>
+                    }
+                </div>
+
+                <div class="thumb-col right">
+                    @foreach (dynamic it in rightY)
+                    {
+                        <figure class="thumb"
+                                data-id="@it.Id"
+                                data-title="@it.Title"
+                                data-date="@it.Date"
+                                data-type="@it.Type"
+                                data-status="@it.Status"
+                                data-right="@it.Right"
+                                data-source="@it.Source"
+                                data-short="@it.ShortDescription"
+                                data-link="@it.SourceLink">
+                            <img class="thumb-img" data-id="@it.Id" data-exts="jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP" alt="@it.Title (@it.Date, @it.Type)" />
+                            <figcaption class="caption">
+                                <strong>@it.Title</strong>
+                                <span>@it.Date · @it.Type</span>
+                            </figcaption>
+                        </figure>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+
+    <div class="viewer" id="viewer" aria-hidden="true">
+        <div class="viewer__stage" id="viewer-stage" title="Hover to exposed">
+            <button class="viewer__close" id="viewer-close" type="button" aria-label="Close">×</button>
+            <img class="viewer__img" id="viewer-img" alt="" />
+            <div class="viewer__hint">HOVER TO EXPOSED</div>
+        </div>
+
+        <div class="viewer__info" id="viewer-info" role="region" aria-label="Image details" hidden>
+            <div class="viewer__infoTitle">DETAILS</div>
+
+            <div class="viewer__meta">
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">TITLE</div>
+                    <div id="viewer-title" data-sensitive></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">DATE</div>
+                    <div id="viewer-date" data-sensitive></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">MEDIA TYPE</div>
+                    <div id="viewer-type" data-sensitive></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">STATUS</div>
+                    <div id="viewer-status" data-sensitive></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">RIGHTS</div>
+                    <div id="viewer-right" data-sensitive></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">SOURCE</div>
+                    <div id="viewer-source" data-sensitive></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">LINK</div>
+                    <div><a id="viewer-link" href="#" target="_blank" rel="noopener noreferrer">Open source</a></div>
+                </div>
+                <div class="viewer__metaRow">
+                    <div class="viewer__metaKey">DESC</div>
+                    <div id="viewer-short" data-sensitive></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HAMBURGER PANEL (RIGHT DRAWER) -->
+    <div class="menu-panel" id="menu-panel" aria-hidden="true">
+        <div class="menu-panel__inner" role="dialog" aria-modal="true" aria-label="Filters">
+            <div class="menu-panel__header">
+                <div class="ui-brand">EXPOSED</div>
+                <button class="menu-close" id="menu-close" type="button" aria-label="Close">×</button>
+            </div>
+
+            <div class="filter-row">
+                <div class="search-box">
+                    <span aria-hidden="true">⌕</span>
+                    <input id="filter-search" type="text" placeholder="Search..." autocomplete="off" />
+                </div>
+
+                <div class="filter-toolbar">
+                    <button class="tool-btn tool-btn--icon" id="filter-years-toggle" type="button" aria-expanded="false" aria-label="Date">
+                        <svg class="tool-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M7 2v2M17 2v2M4 7h16M6 4h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M8 11h3M13 11h3M8 15h3M13 15h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+
+                    <button class="tool-btn tool-btn--icon" id="filter-types-toggle" type="button" aria-expanded="false" aria-label="Category">
+                        <svg class="tool-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M12 2h8v8l-9 9a2 2 0 0 1-3 0l-3-3a2 2 0 0 1 0-3l9-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M17 7h.01" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+
+                    <button class="tool-btn tool-btn--icon" id="filter-rights-toggle" type="button" aria-expanded="false" aria-label="Rights & Status">
+                        <svg class="tool-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            <path d="M9 12l2 2 4-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="collapse" id="filter-years">
+                    <div class="collapse__inner">
+                        <div class="filter-icons" id="filter-years-pills"></div>
+                    </div>
+                </div>
+
+                <div class="collapse" id="filter-types">
+                    <div class="collapse__inner">
+                        <div class="filter-icons" id="filter-types-pills"></div>
+                    </div>
+                </div>
+
+                <div class="collapse" id="filter-rights">
+                    <div class="collapse__inner">
+                        <div class="filter-icons" id="filter-rights-pills"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-panel__grid" id="menu-grid"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            // Image fallback
+            const setupFallback = (img) => {
+                const id = String(img.dataset.id);
+                const idPad = id.padStart(2, '0');
+                const exts = (img.dataset.exts || 'jpg').split(',').map(x => x.trim());
+                const candidates = [];
+                [id, idPad].forEach(i => exts.forEach(ext => candidates.push(`/immages/${i}.${ext}`)));
+                let pos = 0;
+                const setSrc = () => { img.src = candidates[pos]; };
+                img.addEventListener('error', () => { pos++; if (pos < candidates.length) setSrc(); });
+                setSrc();
+            };
+            document.querySelectorAll('.thumb-img').forEach(setupFallback);
+
+            // Random-ish sizing (deterministic)
+            const thumbs = [...document.querySelectorAll('.thumb')];
+            const pickSize = (id) => {
+                const n = (Number(id) * 9301 + 49297) % 233280;
+                const r = n / 233280;
+                if (r < 0.33) return 'size-s';
+                if (r < 0.75) return 'size-m';
+                return 'size-l';
+            };
+            thumbs.forEach(t => t.classList.add(pickSize(t.dataset.id)));
+
+            // Current year indicator
+            const indicator = document.getElementById('year-indicator-inner');
+            let currentYear = null;
+
+            const nearestYearToCenter = () => {
+                const sections = [...document.querySelectorAll('.year-section')];
+                if (sections.length === 0) return null;
+
+                const centerY = window.innerHeight * 0.50;
+                let best = null;
+                let bestDist = Infinity;
+
+                for (const sec of sections) {
+                    const r = sec.getBoundingClientRect();
+                    const mid = r.top + r.height / 2;
+                    const d = Math.abs(mid - centerY);
+                    if (d < bestDist) { bestDist = d; best = sec; }
+                }
+                return best?.dataset.year ?? null;
+            };
+
+            const animateYearChange = (nextYear) => {
+                if (!indicator) return;
+                if (currentYear === nextYear || !nextYear) return;
+
+                const dir = (currentYear && Number(nextYear) < Number(currentYear)) ? 'is-back' : 'is-forward';
+                indicator.classList.remove('is-forward', 'is-back');
+                indicator.classList.add('is-anim', dir);
+
+                void indicator.offsetWidth;
+                indicator.textContent = nextYear;
+
+                window.setTimeout(() => {
+                    indicator.classList.remove('is-anim', 'is-forward', 'is-back');
+                }, 360);
+
+                currentYear = nextYear;
+            };
+
+            const syncYear = () => animateYearChange(nearestYearToCenter());
+            syncYear();
+            document.addEventListener('scroll', syncYear, { passive: true });
+            window.addEventListener('resize', syncYear);
+
+            // Viewer
+            const viewer = document.getElementById('viewer');
+            const viewerStage = document.getElementById('viewer-stage');
+            const viewerClose = document.getElementById('viewer-close');
+            const viewerImg = document.getElementById('viewer-img');
+            const viewerInfo = document.getElementById('viewer-info');
+
+            const vTitle = document.getElementById('viewer-title');
+            const vDate = document.getElementById('viewer-date');
+            const vType = document.getElementById('viewer-type');
+            const vStatus = document.getElementById('viewer-status');
+            const vRight = document.getElementById('viewer-right');
+            const vSource = document.getElementById('viewer-source');
+            const vLink = document.getElementById('viewer-link');
+            const vShort = document.getElementById('viewer-short');
+
+            let currentThumbFigure = null;
+            let isExposed = false;
+
+            const lockScroll = (on) => {
+                document.documentElement.style.overflow = on ? 'hidden' : '';
+                document.body.style.overflow = on ? 'hidden' : '';
+            };
+
+            const clearDetails = () => {
+                vTitle.textContent = '';
+                vDate.textContent = '';
+                vType.textContent = '';
+                vStatus.textContent = '';
+                vRight.textContent = '';
+                vSource.textContent = '';
+                vShort.textContent = '';
+                vLink.href = '#';
+                vLink.textContent = 'Open source';
+            };
+
+            const openViewer = (figure, imgEl) => {
+                currentThumbFigure = figure;
+                isExposed = false;
+
+                viewer.classList.remove('is-sharp');
+                viewer.classList.remove('has-info');
+                viewer.classList.add('is-open');
+                viewer.setAttribute('aria-hidden', 'false');
+                viewerInfo.hidden = true;
+                clearDetails();
+
+                viewerImg.src = imgEl.currentSrc || imgEl.src;
+                viewerImg.alt = imgEl.alt || '';
+
+                lockScroll(true);
+            };
+
+            const closeViewer = () => {
+                viewer.classList.remove('is-open', 'is-sharp', 'has-info');
+                viewer.setAttribute('aria-hidden', 'true');
+                viewerInfo.hidden = true;
+                clearDetails();
+                currentThumbFigure = null;
+                isExposed = false;
+                lockScroll(false);
+            };
+
+            const expose = () => {
+                if (!currentThumbFigure) return;
+                if (isExposed) return;
+
+                isExposed = true;
+                viewer.classList.add('is-sharp');
+                viewer.classList.add('has-info');
+
+                vTitle.textContent = currentThumbFigure.dataset.title || '';
+                vDate.textContent = currentThumbFigure.dataset.date || '';
+                vType.textContent = currentThumbFigure.dataset.type || '';
+                vStatus.textContent = currentThumbFigure.dataset.status || '';
+                vRight.textContent = currentThumbFigure.dataset.right || '';
+                vSource.textContent = currentThumbFigure.dataset.source || '';
+                vShort.textContent = currentThumbFigure.dataset.short || '';
+
+                const link = currentThumbFigure.dataset.link || '';
+                vLink.href = link || '#';
+                vLink.textContent = link || 'Open source';
+
+                viewerInfo.hidden = false;
+
+                currentThumbFigure.classList.add('is-viewed');
+            };
+
+            document.querySelectorAll('.thumb-img').forEach(img => {
+                img.addEventListener('click', () => {
+                    const figure = img.closest('.thumb');
+                    if (!figure) return;
+                    openViewer(figure, img);
+                });
+            });
+
+            viewer.addEventListener('click', (e) => {
+                if (e.target === viewer) closeViewer();
+            });
+
+            viewerClose.addEventListener('click', closeViewer);
+
+            viewerStage.addEventListener('click', (e) => {
+                if (e.target === viewerClose) return;
+                expose();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && viewer.classList.contains('is-open')) closeViewer();
+            });
+
+            // Hamburger menu + filters
+            const menuToggle = document.getElementById('menu-toggle');
+            const menuPanel = document.getElementById('menu-panel');
+            const menuClose = document.getElementById('menu-close');
+
+            const searchInput = document.getElementById('filter-search');
+            const yearsWrap = document.getElementById('filter-years-pills');
+            const typesWrap = document.getElementById('filter-types-pills');
+            const rightsWrap = document.getElementById('filter-rights-pills');
+            const grid = document.getElementById('menu-grid');
+
+            const yearsToggle = document.getElementById('filter-years-toggle');
+            const typesToggle = document.getElementById('filter-types-toggle');
+            const rightsToggle = document.getElementById('filter-rights-toggle');
+
+            const yearsCollapse = document.getElementById('filter-years');
+            const typesCollapse = document.getElementById('filter-types');
+            const rightsCollapse = document.getElementById('filter-rights');
+
+            if (!menuToggle || !menuPanel || !menuClose || !yearsWrap || !typesWrap || !rightsWrap || !grid || !searchInput || !yearsToggle || !typesToggle || !rightsToggle || !yearsCollapse || !typesCollapse || !rightsCollapse) {
+                return;
+            }
+
+            const openMenu = () => {
+                activeYears = new Set();
+                activeTypes = new Set();
+                activeRights = new Set();
+                activeQuery = '';
+                searchInput.value = '';
+
+                yearsCollapse.classList.remove('is-open');
+                typesCollapse.classList.remove('is-open');
+                rightsCollapse.classList.remove('is-open');
+                yearsToggle.setAttribute('aria-expanded', 'false');
+                typesToggle.setAttribute('aria-expanded', 'false');
+                rightsToggle.setAttribute('aria-expanded', 'false');
+
+                rebuildPills();
+                rebuildRightsPills();
+                render();
+
+                menuPanel.classList.add('is-open');
+                menuPanel.setAttribute('aria-hidden', 'false');
+            };
+
+            const closeMenu = () => {
+                menuPanel.classList.remove('is-open');
+                menuPanel.setAttribute('aria-hidden', 'true');
+            };
+
+            menuToggle.addEventListener('click', (e) => { e.preventDefault(); openMenu(); });
+            menuClose.addEventListener('click', (e) => { e.preventDefault(); closeMenu(); });
+
+            menuPanel.addEventListener('click', (e) => {
+                if (e.target === menuPanel) closeMenu();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && menuPanel.classList.contains('is-open')) closeMenu();
+            });
+
+            const thumbFigures = [...document.querySelectorAll('.thumb')];
+            const allItems = thumbFigures.map(fig => {
+                const img = fig.querySelector('img.thumb-img');
+                return {
+                    figure: fig,
+                    img: img,
+                    id: fig.dataset.id || '',
+                    title: fig.dataset.title || '',
+                    date: fig.dataset.date || '',
+                    year: (fig.dataset.date || '').trim().substring(0, 4),
+                    type: fig.dataset.type || '',
+                    right: fig.dataset.right || '',
+                    status: fig.dataset.status || '',
+                };
+            });
+
+            const uniq = (arr) => [...new Set(arr)].filter(Boolean);
+            const allYears = uniq(allItems.map(x => x.year)).sort();
+            const allTypes = uniq(allItems.map(x => x.type)).sort((a, b) => a.localeCompare(b));
+
+            const rightsOptions = [
+                "Copyrighted",
+                "Digitized",
+                "Analog",
+                "Non-Commercial"
+            ];
+
+            let activeYears = new Set();
+            let activeTypes = new Set();
+            let activeRights = new Set();
+            let activeQuery = '';
+
+            const makePill = (label, onClick) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'icon-pill';
+                b.textContent = label;
+                b.addEventListener('click', onClick);
+                return b;
+            };
+
+            const rebuildPills = () => {
+                yearsWrap.innerHTML = '';
+                typesWrap.innerHTML = '';
+
+                allYears.forEach(y => {
+                    const pill = makePill(y, () => {
+                        if (activeYears.has(y)) activeYears.delete(y); else activeYears.add(y);
+                        render();
+                    });
+                    yearsWrap.appendChild(pill);
+                });
+
+                allTypes.forEach(t => {
+                    const pill = makePill(t, () => {
+                        if (activeTypes.has(t)) activeTypes.delete(t); else activeTypes.add(t);
+                        render();
+                    });
+                    typesWrap.appendChild(pill);
+                });
+            };
+
+            const rebuildRightsPills = () => {
+                rightsWrap.innerHTML = '';
+                rightsOptions.forEach(r => {
+                    const pill = makePill(r, () => {
+                        if (activeRights.has(r)) activeRights.delete(r); else activeRights.add(r);
+                        render();
+                    });
+                    rightsWrap.appendChild(pill);
+                });
+            };
+
+            const itemMatches = (it) => {
+                const q = activeQuery.trim().toLowerCase();
+
+                const matchesQuery =
+                    !q ||
+                    it.title.toLowerCase().includes(q) ||
+                    it.type.toLowerCase().includes(q) ||
+                    it.date.toLowerCase().includes(q);
+
+                const matchesYear = activeYears.size === 0 || activeYears.has(it.year);
+                const matchesType = activeTypes.size === 0 || activeTypes.has(it.type);
+
+                const matchesRights = (() => {
+                    if (activeRights.size === 0) return true;
+                    const r = (it.right || '').toLowerCase();
+                    const s = (it.status || '').toLowerCase();
+                    for (const sel of activeRights) {
+                        const token = sel.toLowerCase();
+                        if (r.includes(token) || s.includes(token)) return true;
+                    }
+                    return false;
+                })();
+
+                return matchesQuery && matchesYear && matchesType && matchesRights;
+            };
+
+            const render = () => {
+                [...yearsWrap.querySelectorAll('.icon-pill')].forEach(p => p.classList.toggle('is-active', activeYears.has(p.textContent)));
+                [...typesWrap.querySelectorAll('.icon-pill')].forEach(p => p.classList.toggle('is-active', activeTypes.has(p.textContent)));
+                [...rightsWrap.querySelectorAll('.icon-pill')].forEach(p => p.classList.toggle('is-active', activeRights.has(p.textContent)));
+
+                allItems.forEach(it => {
+                    it.figure.style.display = itemMatches(it) ? '' : 'none';
+                });
+
+                grid.innerHTML = '';
+                allItems.filter(itemMatches).forEach(it => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'menu-polaroid';
+
+                    const img = document.createElement('img');
+                    img.className = 'menu-polaroid__img';
+                    img.src = it.img?.currentSrc || it.img?.src || '';
+                    img.alt = it.title;
+
+                    const cap = document.createElement('div');
+                    cap.className = 'menu-polaroid__caption';
+
+                    const meta = document.createElement('div');
+                    meta.className = 'menu-polaroid__meta';
+                    meta.textContent = `${it.date} · ${it.type}`;
+
+                    const title = document.createElement('div');
+                    title.className = 'menu-polaroid__title';
+                    title.textContent = it.title;
+
+                    cap.append(meta, title);
+                    btn.append(img, cap);
+
+                    btn.addEventListener('click', () => {
+                        closeMenu();
+                        it.figure.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+
+                    grid.appendChild(btn);
+                });
+            };
+
+            const toggleCollapse = (btn, col) => {
+                const isOpen = col.classList.toggle('is-open');
+                btn.setAttribute('aria-expanded', String(isOpen));
+            };
+
+            yearsToggle.addEventListener('click', () => toggleCollapse(yearsToggle, yearsCollapse));
+            typesToggle.addEventListener('click', () => toggleCollapse(typesToggle, typesCollapse));
+            rightsToggle.addEventListener('click', () => toggleCollapse(rightsToggle, rightsCollapse));
+
+            searchInput.addEventListener('input', () => { activeQuery = searchInput.value || ''; render(); });
+
+            rebuildPills();
+            rebuildRightsPills();
+            render();
+        })();
+    </script>
+}

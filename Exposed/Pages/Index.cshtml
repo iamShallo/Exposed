@@ -1,0 +1,50 @@
+﻿@page "/"
+@{
+    ViewData["Title"] = "Exposed";
+}
+<div class="screen" id="landing">
+    <header class="ui-top">
+        <div class="ui-brand">EXPOSED</div>
+        <button class="ui-menu" type="button" aria-label="Menu">☰</button>
+    </header>
+
+    <main class="ui-center">
+        <p class="center-quote">They were not soldiers. They were exposed.</p>
+    </main>
+
+    <footer class="ui-bottom-left">
+        <button id="audio-toggle" class="audio-btn" aria-label="Toggle war ambience">
+            <span id="audio-icon" class="audio-icon">🔈</span>
+            <span class="audio-wave"></span>
+        </button>
+        <audio id="war-audio" src="~/audio/war.mp3" preload="none" loop></audio>
+    </footer>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+          const screen = document.getElementById('landing');
+          const toggle = document.getElementById('audio-toggle');
+          const audio  = document.getElementById('war-audio');
+          const icon   = document.getElementById('audio-icon');
+
+          // Naviga alla timeline cliccando ovunque (tranne controlli UI)
+          screen.addEventListener('click', (e) => {
+            if (e.target.closest('button, a, input, textarea, select, label')) return;
+            window.location.href = '/timeline';
+          });
+
+          // Il toggle audio non deve navigare
+          toggle.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+              try { await audio.play(); icon.textContent = '🔊'; toggle.classList.add('is-playing'); }
+              catch { /* autoplay bloccato */ }
+            } else {
+              audio.pause(); icon.textContent = '🔈'; toggle.classList.remove('is-playing');
+            }
+          });
+        })();
+    </script>
+}

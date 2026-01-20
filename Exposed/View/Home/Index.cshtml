@@ -1,0 +1,47 @@
+@page "/"
+@{
+    ViewData["Title"] = "Exposed";
+}
+<div class="screen">
+    <header class="ui-top">
+        <div class="ui-brand">EXPOSED</div>
+        <button class="ui-menu" type="button" aria-label="Menu">?</button>
+    </header>
+
+    <main class="ui-center">
+        <p class="center-quote">They were not soldiers. They were exposed.</p>
+    </main>
+
+    <footer class="ui-bottom-left">
+        <button id="audio-toggle" class="audio-btn" aria-label="Toggle war ambience">
+            <span id="audio-icon" class="audio-icon">??</span>
+            <span class="audio-wave"></span>
+        </button>
+        <audio id="war-audio" src="~/audio/war.mp3" preload="none" loop></audio>
+    </footer>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+          const screen = document.querySelector('.screen');
+          const toggle = document.getElementById('audio-toggle');
+          const audio = document.getElementById('war-audio');
+          const icon  = document.getElementById('audio-icon');
+
+          // Naviga a timeline su click ovunque
+          screen.addEventListener('click', () => { window.location.href = '/timeline'; });
+
+          // Non navigare quando si clicca il toggle audio
+          toggle.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+              try { await audio.play(); icon.textContent = '??'; toggle.classList.add('is-playing'); }
+              catch { /* Autoplay bloccato: resta muto */ }
+            } else {
+              audio.pause(); icon.textContent = '??'; toggle.classList.remove('is-playing');
+            }
+          });
+        })();
+    </script>
+}
