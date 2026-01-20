@@ -169,7 +169,8 @@ html, body {
     }
 
 .thumb {
-    width: min(44vw,760px);
+    width: min(38vw, 640px);
+    max-width: 100%;
     display: grid;
     gap: 10px;
 }
@@ -197,15 +198,18 @@ html, body {
     }
 
 .thumb.size-s {
-    width: min(28vw,520px);
+    width: min(24vw, 440px);
+    max-width: 100%;
 }
 
 .thumb.size-m {
-    width: min(40vw,700px);
+    width: min(34vw, 600px);
+    max-width: 100%;
 }
 
 .thumb.size-l {
-    width: min(52vw,920px);
+    width: min(44vw, 760px);
+    max-width: 100%;
 }
 
 .thumb-col.left .thumb:nth-child(odd) {
@@ -656,3 +660,32 @@ html, body {
     max-width: 44ch;
     margin: 0;
 }
+
+/* Evita overflow/layout shift: ogni colonna può restringersi correttamente */
+.year-section,
+.timeline-wrap {
+    min-width: 0;
+}
+
+.thumb-col {
+    min-width: 0;
+}
+
+/* La thumb non deve mai essere più larga della sua colonna */
+.thumb {
+    max-width: 100%;
+}
+
+/* I size rimangono, ma non possono sfondare la colonna */
+.thumb.size-s,
+.thumb.size-m,
+.thumb.size-l {
+    max-width: 100%;
+}
+
+/* Riduci l'offset laterale quando lo spazio è poco (senza rimuoverlo) */
+.thumb-col.left .thumb:nth-child(odd)  { transform: translateX(clamp(-18px, -2vw, -8px)); }
+.thumb-col.left .thumb:nth-child(even) { transform: translateX(clamp(  8px,  1.2vw, 10px)); }
+
+.thumb-col.right .thumb:nth-child(odd) { transform: translateX(clamp(  8px,  1.2vw, 18px)); }
+.thumb-col.right .thumb:nth-child(even){ transform: translateX(clamp(-10px, -1.4vw, -6px)); }
