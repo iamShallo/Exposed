@@ -108,6 +108,26 @@ html, body {
         animation: yearScrollUp 320ms cubic-bezier(.2,.9,.2,1);
     }
 
+.year-indicator__digits{
+    display: inline-flex;
+    gap: 0;
+}
+
+.year-digit{
+    display: inline-block;
+    min-width: .62em;
+    text-align: center;
+    will-change: transform, filter, opacity;
+}
+
+.year-digit.is-anim.is-forward{
+    animation: yearScrollDown 320ms cubic-bezier(.2,.9,.2,1);
+}
+
+.year-digit.is-anim.is-back{
+    animation: yearScrollUp 320ms cubic-bezier(.2,.9,.2,1);
+}
+
 /* scanline / mask */
 .year-indicator__value::after{
     content:"";
@@ -129,6 +149,16 @@ html, body {
     100% { transform: translateY(0);    opacity: 1; filter: blur(0); }
 }
 @keyframes yearScrollUp{
+    0%   { transform: translateY(60%); opacity: 0; filter: blur(6px); }
+    60%  { opacity: 1; filter: blur(2px); }
+    100% { transform: translateY(0);   opacity: 1; filter: blur(0); }
+}
+@keyframes yearDigitDown{
+    0%   { transform: translateY(-60%); opacity: 0; filter: blur(6px); }
+    60%  { opacity: 1; filter: blur(2px); }
+    100% { transform: translateY(0);    opacity: 1; filter: blur(0); }
+}
+@keyframes yearDigitUp{
     0%   { transform: translateY(60%); opacity: 0; filter: blur(6px); }
     60%  { opacity: 1; filter: blur(2px); }
     100% { transform: translateY(0);   opacity: 1; filter: blur(0); }

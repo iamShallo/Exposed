@@ -44,7 +44,12 @@
     <div class="year-indicator" aria-hidden="true">
         <span class="year-indicator__label">YEAR</span>
         <span class="year-indicator__value">
-            <span id="year-indicator-inner" class="year-indicator__inner">1939</span>
+            <span id="year-indicator-inner" class="year-indicator__digits" aria-label="Current year">
+                <span class="year-digit" data-pos="0">1</span>
+                <span class="year-digit" data-pos="1">9</span>
+                <span class="year-digit" data-pos="2">3</span>
+                <span class="year-digit" data-pos="3">9</span>
+            </span>
         </span>
     </div>
 
@@ -265,18 +270,40 @@
 
             const animateYearChange = (nextYear) => {
                 if (!indicator) return;
-                if (currentYear === nextYear || !nextYear) return;
+                if (!nextYear) return;
 
-                const dir = (currentYear && Number(nextYear) < Number(currentYear)) ? 'is-back' : 'is-forward';
-                indicator.classList.remove('is-forward', 'is-back');
-                indicator.classList.add('is-anim', dir);
+                const next = String(nextYear).padStart(4, '0').slice(0, 4);
 
-                void indicator.offsetWidth;
-                indicator.textContent = nextYear;
+                // Se non c'è ancora un anno corrente, inizializza senza animare
+                if (!currentYear) {
+                    const digits = indicator.querySelectorAll('.year-digit');
+                    digits.forEach((d, i) => d.textContent = next[i]);
+                    currentYear = nextYear;
+                    return;
+                }
 
-                window.setTimeout(() => {
-                    indicator.classList.remove('is-anim', 'is-forward', 'is-back');
-                }, 360);
+                if (String(currentYear) === next) return;
+
+                const dir = (Number(nextYear) < Number(currentYear)) ? 'is-back' : 'is-forward';
+
+                const prev = String(currentYear).padStart(4, '0').slice(0, 4);
+                const digits = indicator.querySelectorAll('.year-digit');
+
+                digits.forEach((digitEl, i) => {
+                    if (prev[i] === next[i]) return;
+
+                    digitEl.classList.remove('is-forward', 'is-back', 'is-anim');
+
+                    // restart animazione sul singolo digit
+                    void digitEl.offsetWidth;
+
+                    digitEl.textContent = next[i];
+                    digitEl.classList.add('is-anim', dir);
+
+                    window.setTimeout(() => {
+                        digitEl.classList.remove('is-anim', 'is-forward', 'is-back');
+                    }, 360);
+                });
 
                 currentYear = nextYear;
             };
