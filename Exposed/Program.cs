@@ -10,12 +10,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// Su Render il traffico arriva HTTP dal proxy: evita redirect forzato
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
-
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
