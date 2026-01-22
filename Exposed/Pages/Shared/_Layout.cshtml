@@ -8,6 +8,170 @@
 </head>
 <body>
     @RenderBody()
+
+    <div class="bg-audio" aria-label="Background audio controls">
+        <button id="bg-audio-mute" class="bg-audio__mute" type="button" aria-label="Mute/Unmute">
+            <span id="bg-audio-icon" aria-hidden="true">🔈</span>
+        </button>
+
+        <input id="bg-audio-volume"
+               class="bg-audio__slider"
+               type="range"
+               min="0"
+               max="1"
+               step="0.01"
+               value="0"
+               aria-label="Volume" />
+
+        <audio id="bg-audio" src="~/audio/background.mp3" preload="auto" loop></audio>
+    </div>
+
+    <script>
+        (() => {
+            const audio = document.getElementById('bg-audio');
+            const slider = document.getElementById('bg-audio-volume');
+            const muteBtn = document.getElementById('bg-audio-mute');
+            const icon = document.getElementById('bg-audio-icon');
+
+            const KEY_VOL = 'bgAudio.volume';   // 0..1 (slider)
+            const KEY_LAST = 'bgAudio.last';    // last volume > 0 (per unmute)
+            const KEY_MUTED = 'bgAudio.muted';  // 0/1
+            const KEY_TIME = 'bgAudio.time';    // currentTime (sec)
+
+            const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+            const setIcon = () => {
+                icon.textContent = (audio.muted || audio.volume === 0) ? '🔈' : '🔊';
+            };
+
+            const saveTime = () => {
+                try { localStorage.setItem(KEY_TIME, String(audio.currentTime || 0)); } catch { }
+            };
+
+            const persist = () => {
+                try {
+                    localStorage.setItem(KEY_VOL, String(audio.volume));
+                    localStorage.setItem(KEY_MUTED, audio.muted ? '1' : '0');
+                    if (audio.volume > 0) localStorage.setItem(KEY_LAST, String(audio.volume));
+                    saveTime();
+                } catch { }
+            };
+
+            const tryPlay = async () => {
+                // se volume > 0 e non mutato, prova a partire
+                if (audio.muted || audio.volume === 0) return;
+                try { await audio.play(); } catch { /* autoplay bloccato finché non c'è gesture */ }
+            };
+
+            const restoreTime = async () => {
+                const t = Number(localStorage.getItem(KEY_TIME));
+                if (!Number.isFinite(t) || t <= 0) return;
+
+                const apply = () => { try { audio.currentTime = t; } catch { } };
+
+                if (audio.readyState >= 1) { apply(); return; }
+
+                await new Promise((resolve) => {
+                    audio.addEventListener('loadedmetadata', () => resolve(), { once: true });
+                });
+                apply();
+            };
+
+            const setVolume = async (vol) => {
+                const v = clamp01(Number(vol));
+                audio.volume = v;
+                slider.value = String(v);
+
+                if (v > 0) {
+                    audio.muted = false;
+                    await tryPlay();
+                }
+
+                setIcon();
+                persist();
+            };
+
+            const load = async () => {
+                const mutedRaw = localStorage.getItem(KEY_MUTED);
+                const volRaw = localStorage.getItem(KEY_VOL);
+                const lastRaw = localStorage.getItem(KEY_LAST);
+
+                const savedVolNum = Number(volRaw);
+                const savedVol = Number.isFinite(savedVolNum) ? clamp01(savedVolNum) : null;
+
+                audio.muted = (mutedRaw === '1');
+
+                // Slider a 0 SOLO se non esiste mai un volume salvato
+                const initVol = (savedVol === null) ? 0 : savedVol;
+
+                audio.volume = audio.muted ? 0 : initVol;
+                slider.value = String(audio.volume);
+
+                // last (per unmute)
+                const last = clamp01(Number(lastRaw));
+                if (Number.isFinite(last) && last > 0) localStorage.setItem(KEY_LAST, String(last));
+                else if (audio.volume > 0) localStorage.setItem(KEY_LAST, String(audio.volume));
+
+                // ripristina posizione mp3 (anche se volume=0)
+                await restoreTime();
+
+                // se volume > 0 (e non mutato) prova a partire subito
+                await tryPlay();
+
+                setIcon();
+                persist();
+            };
+
+            // Salva spesso il tempo (utile su navigazione rapida)
+            let lastSaveMs = 0;
+            audio.addEventListener('timeupdate', () => {
+                const now = performance.now();
+                if (now - lastSaveMs < 300) return;
+                lastSaveMs = now;
+                saveTime();
+            });
+
+            // Salva su uscita pagina (cambio pagina / refresh)
+            window.addEventListener('pagehide', saveTime);
+            window.addEventListener('beforeunload', saveTime);
+
+            // Slider: muovendolo parte la musica
+            slider.addEventListener('input', () => { setVolume(slider.value); });
+
+            // Mute: slider->0 e muted=true, NON pause/stop
+            muteBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                if (!audio.muted && audio.volume > 0) {
+                    localStorage.setItem(KEY_LAST, String(audio.volume));
+                }
+
+                if (audio.muted || audio.volume === 0) {
+                    // unmute
+                    const last = clamp01(Number(localStorage.getItem(KEY_LAST)));
+                    const target = (Number.isFinite(last) && last > 0) ? last : 0.6;
+                    audio.muted = false;
+                    await setVolume(target);
+                } else {
+                    // mute
+                    audio.muted = true;
+                    await setVolume(0);
+                    // lasciare in play non ha senso se volume=0+muted ma non facciamo pause()
+                }
+
+                setIcon();
+                persist();
+            });
+
+            // Prima gesture: se c’è volume > 0, sblocca play (policy browser)
+            const unlock = () => { tryPlay(); };
+            document.addEventListener('pointerdown', unlock, { capture: true });
+            document.addEventListener('keydown', unlock, { capture: true });
+
+            load();
+        })();
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

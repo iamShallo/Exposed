@@ -650,4 +650,21 @@
             render();
         })();
     </script>
+
+    <script>
+        (() => {
+            const brand = document.querySelector('a.ui-brand[href="/"]');
+            if (!brand) return;
+
+            brand.addEventListener('click', () => {
+                const a = document.getElementById('bg-audio');
+                if (!a) return;
+
+                localStorage.setItem('bgAudio.time', String(a.currentTime || 0));
+                localStorage.setItem('bgAudio.volume', String(a.volume ?? 0));
+                localStorage.setItem('bgAudio.muted', a.muted ? '1' : '0');
+                if ((a.volume ?? 0) > 0) localStorage.setItem('bgAudio.last', String(a.volume));
+            });
+        })();
+    </script>
 }
